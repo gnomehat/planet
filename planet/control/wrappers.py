@@ -541,6 +541,32 @@ class ConvertTo32Bit(object):
     return np.array(reward, dtype=np.float32)
 
 
+import imutil
+class ConvertSC2Env(object):
+  """Convert the 'state' tuple of a SC2Env Gym environment """
+
+  def __init__(self, env):
+    self._env = env
+
+  def __getattr__(self, name):
+    return getattr(self._env, name)
+
+  def step(self, action):
+    state, reward, done, info = self._env.step(action)
+    obs = imutil.get_pixels(state[3], 64, 64) * 255
+    return obs, reward, done, info
+
+  def reset(self):
+    state = self._env.reset()
+    obs = imutil.get_pixels(state[3], 64, 64) * 255
+    return obs
+
+  def render(self, *args, **kwargs):
+    state = self._env.render(*args, **kwargs)
+    obs = imutil.get_pixels(state[3], 64, 64) * 255
+    return obs
+
+
 class Async(object):
   """Step environment in a separate process for lock free paralellism."""
 
