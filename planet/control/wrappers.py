@@ -260,7 +260,7 @@ class NormalizeActions(object):
     space = self._env.action_space
     low = np.where(self._enabled, -np.ones_like(space.low), space.low)
     high = np.where(self._enabled, np.ones_like(space.high), space.high)
-    return gym.spaces.Box(low, high)
+    return gym.spaces.Box(low, high, dtype=np.float32)
 
   def step(self, action):
     action = (action + 1) / 2 * (self._high - self._low) + self._low
